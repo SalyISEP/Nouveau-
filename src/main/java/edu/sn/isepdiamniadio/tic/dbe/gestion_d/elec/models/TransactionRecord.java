@@ -27,14 +27,16 @@ public class TransactionRecord {
 
     private LocalDate date;
 
-    @Column(name = "compteur")
-    private String compteur;// Si le compteur est un identifiant simple, laisse comme String. Sinon,  une relation @ManyToOne ou @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "compteur_id")
+    private Compteur compteur;// Si le compteur est un identifiant simple, laisse comme String. Sinon,  une relation @ManyToOne ou @OneToOne
 
     @Column(name = "numéroCompteur")
     private String numéroCompteur;
 
-    @Column(name = "dateOperation")
+    @Column(name = "date_operation")
     private LocalDate dateTransaction;
+
 
     //@JoinColumn(name = "compteur_id")
     // private Compteur compteur;
@@ -42,7 +44,7 @@ public class TransactionRecord {
     public TransactionRecord(int montant, LocalDate date, String compteur) {
         this.montant = montant;
         this.date = date;
-        this.compteur = compteur;
+        //this.compteur = compteur;
     }
 
     public TransactionRecord() {

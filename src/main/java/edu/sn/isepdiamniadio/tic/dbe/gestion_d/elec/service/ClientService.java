@@ -7,6 +7,8 @@ import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.repository.ClientRepository;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.repository.CompteurRepository;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.repository.TransactionRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,28 +26,47 @@ public class ClientService {
     @Autowired
     private TransactionRecordRepository transactionRepository;
 
-    /**
-     * Achat d'électricité par un utilisateur.
-     *
-     * @param utilisateurId L'ID de l'utilisateur
-     * @param montant       Le montant d'achat
-     * @return Message indiquant le statut de l'achat
-     */
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public ClientService(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public String encodePassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
+    }
+    @Autowired
+    public ClientService(ClientRepository clientRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.clientRepository = clientRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public Client register(Client client) {
+        // Vérifier si l'email existe déjà
+        if (clientRepository.findByEmail(client.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Un client avec cet email existe déjà !");
+        }
+
+        // Hacher le mot de passe
+        client.setPassword(passwordEncoder.encode(client.getPassword()));
+
+        // Sauvegarder le client
+        return clientRepository.save(client);
+    }
+
+    // Achat d'électricité par un utilisateur.
     public String achatElectricite(Long utilisateurId, double montant) {
         Client client = clientRepository.findById(utilisateurId)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
-
         if (client.getBalance() < montant) {
             return "Solde insuffisant pour cet achat.";
         }
-
         // Déduction du montant et création d'une transaction
         client.setBalance(client.getBalance() - montant);
-
         double tarifParKWh = 181.82; // Exemple de tarif
         double quantiteEnergie = montant / tarifParKWh;
         String codeWoyofal = "WYO-" + System.currentTimeMillis();
-
         Compteur compteur = compteurRepository.findByClient(client);
         if (compteur == null) {
             throw new IllegalStateException("Compteur non trouvé pour cet utilisateur.");
@@ -63,20 +84,15 @@ public class ClientService {
                 codeWoyofal, compteur.getNumCompteur(), quantiteEnergie, LocalDateTime.now()
         );
         System.out.println(notificationMessage);
-
         return "Achat d'électricité réussi. Une notification a été envoyée.";
     }
 
-    /**
-     * Active un utilisateur.
-     */
+    //Active un utilisateur.
     public boolean activerUtilisateur(Long id) {
         return setUtilisateurActif(id, true);
     }
 
-    /**
-     * Désactive un utilisateur.
-     */
+    //Désactive un utilisateur.
     public boolean desactiverUtilisateur(Long id) {
         return setUtilisateurActif(id, false);
     }
@@ -92,7 +108,7 @@ public class ClientService {
         return false;
     }
 
-   //Crée un nouvel utilisateur.
+    //Crée un nouvel utilisateur.
     public Client createUtilisateur(Client client) {
         return clientRepository.save(client);
     }
@@ -106,6 +122,7 @@ public class ClientService {
     public Optional<Client> getUtilisateurById(Long utilisateurId) {
         return clientRepository.findById(utilisateurId);
     }
+
     //Met à jour un utilisateur existant.
     public Client updateUtilisateur(Long id, Client clientDetails) {
         Client client = clientRepository.findById(id)
@@ -124,7 +141,7 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
-   //Attribue un numéro unique à un utilisateur.
+    //Attribue un numéro unique à un utilisateur.
     public void attribuerNumero(Long utilisateurId) {
         Client client = clientRepository.findById(utilisateurId)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
@@ -136,6 +153,21 @@ public class ClientService {
     public void save(Client client) {
         clientRepository.save(client);
     }
+
+    public Client saveClient(Client client) {
+        return clientRepository.save(client);
+    }
+
+    public Client getClientByEmail(String email) {
+        return clientRepository.findByEmail(email).orElse(null);
+    }
+
+
+
+//    public Client getClientByEmail(String email) {
+//        return clientRepository.findByEmail(email);
+//    }
+}
 
 
 //    //lii sii yokouu
@@ -150,4 +182,3 @@ public class ClientService {
 //        // Utilise la classe ConsultationConsommation pour obtenir l'historique des consommations
 //        return consulterConsomation.getHistoriqueConsommation(client);
 //    }
-}

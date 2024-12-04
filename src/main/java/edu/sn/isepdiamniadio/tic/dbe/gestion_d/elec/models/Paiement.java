@@ -1,6 +1,8 @@
 package edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -13,11 +15,11 @@ public class Paiement {
     private double montant;
     private String modePaiement;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date datePaiement;
+    @Column(name = "date_paiement")
+    private LocalDate datePaiement;
 
     @ManyToOne
-    @JoinColumn(name = "utilisateur_id")
+    @JoinColumn(name = "client_id")
     private Client client;  // Lien vers l'utilisateur pour chaque paiement
 
     // Getters et setters
@@ -45,19 +47,22 @@ public class Paiement {
         this.modePaiement = modePaiement;
     }
 
-    public Date getDatePaiement() {
+    public LocalDate getDatePaiement() {
         return datePaiement;
     }
 
-    public void setDatePaiement(Date datePaiement) {
+    public void setDatePaiement(LocalDate datePaiement) {
+
         this.datePaiement = datePaiement;
     }
 
-    public Client getUtilisateur() {
+    public Client getClient() {
+
         return client;
     }
 
-    public void setUtilisateur(Client client) {
+    public void setClient(Client client) {
+
         this.client = client;
     }
 }

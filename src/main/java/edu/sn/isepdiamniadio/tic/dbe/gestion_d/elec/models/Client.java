@@ -18,25 +18,30 @@ public class Client {
     private String nom;
     private String email;
     private String numCompteur;
-    private String password;// Ajout de l'attribut password
-    private double balance; // Ajout de l'attribut balance
-    private boolean isActive; // Ajout de l'attribut isActive pour l'état actif/inactif
-    private boolean active; // Remarque : le champ est nommé "active".
+    private String password; // Ajout de l'attribut password
+    private double balance;  // Ajout de l'attribut balance
+    private boolean isActive;
 
-    // Méthode getter pour `active`
-    public boolean isActif() {
-        return active;
-    }
+    @ManyToOne
+    @JoinColumn(name = "compteur_id")
+    private Compteur compteur;
 
-    // Méthode setter pour `active`
-    public void setActif(boolean active) {
-        this.active = active;
-    }
+//    @OneToMany(mappedBy = "client") //, cascade = CascadeType.ALL
+//    private List<Paiement> paiements;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<Paiement> paiements;  // Liste de paiements liés à l'utilisateur
+    private List<Paiement> paiements;
 
+    public Client(String nom, String email, String numCompteur, String password, double balance, boolean isActive) {
+        this.nom = nom;
+        this.email = email;
+        this.numCompteur = numCompteur;
+        this.password = password;
+        this.balance = balance;
+        this.isActive = isActive;
+    }
 
+    // Getters et setters...
     // Getters et Setters
     public Long getId() {
         return id;
@@ -63,6 +68,7 @@ public class Client {
     }
 
     public String getPassword() {
+
         return password;
     }
 
@@ -100,4 +106,13 @@ public class Client {
         this.numCompteur = numeroCompteur;
     }
 
+    // Implémentation de isActif()
+    public boolean isActif() {
+        return isActive;
+    }
+
+    // Implémentation de setActif()
+    public void setActif(boolean actif) {
+        this.isActive = actif;
+    }
 }

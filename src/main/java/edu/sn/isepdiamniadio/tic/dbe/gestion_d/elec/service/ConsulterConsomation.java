@@ -14,12 +14,7 @@
 //    @Autowired
 //    private TransactionRecordRepository transactionRepository;
 //
-//    /**
-//     * Récupère l'historique des consommations d'un client.
-//     *
-//     * @param client Le client dont on souhaite consulter l'historique.
-//     * @return La liste des transactions (consommations) du client.
-//     */
+//    //Récupère l'historique des consommations d'un client.
 //    public List<TransactionRecord> getHistoriqueConsommation(Client client) {
 //        // Récupère toutes les transactions associées au client
 //        List<TransactionRecord> historique = transactionRepository.findByClient(client);

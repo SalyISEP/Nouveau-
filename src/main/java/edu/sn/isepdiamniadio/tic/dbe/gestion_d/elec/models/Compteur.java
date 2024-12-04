@@ -1,9 +1,14 @@
 package edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Compteur {
 
     @Id
@@ -12,21 +17,18 @@ public class Compteur {
     private String numCompteur;
 
     @ManyToOne
-    @JoinColumn(name = "utilisateur_id")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @OneToMany(mappedBy = "compteur", cascade = CascadeType.ALL)
     private List<TransactionRecord> transactions;
 
-    // Default constructor
-    public Compteur() {}
 
-    // Constructor with necessary fields
-    public Compteur(String numCompteur, Client client) {
-        this.numCompteur = numCompteur;
-        this.client = client;
-    }
+    @ManyToOne
+    @JoinColumn(name = "compteur_id")
+    private Compteur compteur;
 
+    // Autres getters, setters et constructeurs...
     // Getters and setters
     public Long getId() {
         return id;
