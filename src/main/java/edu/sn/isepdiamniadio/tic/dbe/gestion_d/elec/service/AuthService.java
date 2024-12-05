@@ -49,9 +49,11 @@ public class AuthService {
     public String authenticate(String email, String password) {
         try {
             // Authentification via AuthenticationManager
-            authenticationManager.authenticate(
+            /*authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
+
+             */
 
             // Récupérer les détails du client
             Client client = clientRepository.findByEmail(email)

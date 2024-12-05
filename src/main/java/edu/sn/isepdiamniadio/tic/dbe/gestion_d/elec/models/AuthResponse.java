@@ -1,5 +1,10 @@
 package edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AuthResponse {
     private String token;
 

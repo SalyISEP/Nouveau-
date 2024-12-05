@@ -56,8 +56,8 @@ public class ClientService {
     }
 
     // Achat d'électricité par un utilisateur.
-    public String achatElectricite(Long utilisateurId, double montant) {
-        Client client = clientRepository.findById(utilisateurId)
+    public String achatElectricite(String clientEmail, double montant) {
+        Client client = clientRepository.findByEmail(clientEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
         if (client.getBalance() < montant) {
             return "Solde insuffisant pour cet achat.";
@@ -84,7 +84,7 @@ public class ClientService {
                 codeWoyofal, compteur.getNumCompteur(), quantiteEnergie, LocalDateTime.now()
         );
         System.out.println(notificationMessage);
-        return "Achat d'électricité réussi. Une notification a été envoyée.";
+        return "Achat d'électricité réussi. Une notification a été envoyée." + notificationMessage;
     }
 
     //Active un utilisateur.

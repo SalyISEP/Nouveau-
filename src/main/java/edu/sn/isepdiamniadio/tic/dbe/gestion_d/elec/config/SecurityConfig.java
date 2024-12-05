@@ -10,10 +10,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -36,18 +38,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.debug("Configuring security filter chain");  // Log de débogage
-        http
+       return http
                 .csrf(csrf -> csrf.disable())  // Désactivation de la protection CSRF
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/auth/login", "/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
                         // .requestMatchers("/admin/**").hasRole("ADMIN")
                         // .requestMatchers("/client/**").hasRole("CLIENT")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());  // Configuration par défaut de HTTP Basic
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                //.authenticationProvider(authenticationProvider)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build(); // Pas de session
 
-        return http.build();
     }
 }
 

@@ -1,10 +1,13 @@
 package edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.controller;
 
+import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models.AuthFilter;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models.AuthResponse;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models.Client;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.models.LoginRequest;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.service.AuthService;
 import edu.sn.isepdiamniadio.tic.dbe.gestion_d.elec.service.ClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,8 @@ public class AuthController {
 
     private final AuthService authService;
     private  ClientService clientService;
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
     public AuthController(AuthService authService) {
         this.authService = authService;
